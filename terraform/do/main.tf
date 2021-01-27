@@ -42,7 +42,7 @@ resource "digitalocean_droplet" "dorunner" {
     user        = "root"
     type        = "ssh"
     private_key = file(var.ssh_key_file)
-    timeout     = "3m"
+    timeout     = "20m"
   }
 
   #Upload runner agent install script
@@ -61,7 +61,7 @@ resource "digitalocean_droplet" "dorunner" {
     inline = [
       "export PATH=$PATH:/usr/bin",
       "sudo apt update",
-      "sudo apt -y upgrade",
+      # "sudo apt -y upgrade", #Uncomment this line if you want to update OS. This may dramitically increase your node provision time
       "curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -",
       "sudo apt install -y nodejs",
       "cd /tmp",
@@ -75,7 +75,7 @@ resource "digitalocean_droplet" "dorunner" {
 
 output "runner_hosts_and_ip_addresses" {
   value = {
-    for instance in digitalocean_droplet.dorunner:
+    for instance in digitalocean_droplet.dorunner :
     instance.name => instance.ipv4_address
   }
 }
